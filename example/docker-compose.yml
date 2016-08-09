@@ -1,0 +1,50 @@
+zookeeper:
+  image: elevy/zookeeper:v3.4.7
+  hostname: zookeeper
+  restart: always
+  ports:
+    - "2181:2181"
+  environment:
+    MYID: "1"
+    SERVERS: zookeeper
+
+kafka:
+  image: confluent/kafka:0.10.0.0-cp1
+  hostname: kafka
+  restart: always
+  ports:
+    - "9092:9092"
+  links:
+    - zookeeper
+  environment:
+    KAFKA_ZOOKEEPER_CONNECT: "zookeeper:2181"
+    KAFKA_ADVERTISED_HOST_NAME: kafka
+
+schema-registry:
+  image: confluent/schema-registry:3.0.0
+  hostname: schema-registry
+  restart: always
+  ports:
+    - "8081:8081"
+  links:
+    - zookeeper
+    - kafka
+  environment:
+    SR_KAFKASTORE_CONNECTION_URL: "zookeeper:2181"
+    SR_LISTENERS: "http://0.0.0.0:8081"
+
+kafka-connect:
+  build: ..
+  hostname: kafka-connect
+  restart: always
+  links:
+    - kafka
+    - schema-registry
+    - zookeeper
+  environment:
+    KAFKA_SERVER: kafka
+    SCHEMA_SERVER: schema-registry
+    CONNECTOR_NAME: console-sink
+    CONNECTOR_CONNECTOR_CLASS: org.apache.kafka.connect.file.FileStreamSinkConnector
+    CONNECTOR_TASKS_MAX: 1
+    CONNECTOR_TOPICS: connect-test
