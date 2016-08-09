@@ -24,6 +24,9 @@ function configure() {
 }
 
 configure connector.properties CONNECTOR
-dockerize -template connect-standalone.properties.template:connect-standalone.properties
+dockerize -wait tcp://$KAFKA_SERVER:9092 \
+          -wait http://$SCHEMA_SERVER:8081 \
+          -timeout 300s \
+          -template connect-standalone.properties.template:connect-standalone.properties
 
 exec $@
