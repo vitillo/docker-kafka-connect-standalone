@@ -23,6 +23,10 @@ function configure() {
     done
 }
 
+if [[ $CONNECTOR_HIVE_METASTORE_URIS =~ thrift://(.*) ]]; then
+    dockerize -wait tcp://${BASH_REMATCH[1]} -timeout 300s
+fi
+
 configure connector.properties CONNECTOR
 dockerize -wait tcp://$KAFKA_SERVER:9092 \
           -wait http://$SCHEMA_SERVER:8081 \
