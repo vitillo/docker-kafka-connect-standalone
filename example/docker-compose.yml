@@ -44,7 +44,9 @@ kafka-connect:
   environment:
     KAFKA_SERVER: kafka
     SCHEMA_SERVER: schema-registry
-    CONNECTOR_NAME: console-sink
-    CONNECTOR_CONNECTOR_CLASS: org.apache.kafka.connect.file.FileStreamSinkConnector
-    CONNECTOR_TASKS_MAX: 1
-    CONNECTOR_TOPICS: connect-test
+    ZOOKEEPER_SERVER: zookeeper
+    CONNECTOR_name: console-sink
+    CONNECTOR_connector_class: org.apache.kafka.connect.file.FileStreamSinkConnector
+    CONNECTOR_tasks_max: 1
+    CONNECTOR_topics: test
+
